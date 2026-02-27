@@ -1,0 +1,146 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@400;600;700&family=Syne:wght@700;800&display=swap");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0a0a0f;
+}
+
+@keyframes bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes glitch {
+  0%,
+  90%,
+  100% {
+    transform: translate(0);
+  }
+  92% {
+    transform: translate(-2px, 1px);
+  }
+  94% {
+    transform: translate(2px, -1px);
+  }
+  96% {
+    transform: translate(-1px, -1px);
+  }
+  98% {
+    transform: translate(1px, 2px);
+  }
+}
+
+.topic-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #aaa;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: "JetBrains Mono", monospace;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.topic-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.topic-btn.selected {
+  background: rgba(79, 195, 247, 0.15);
+  border-color: #4fc3f7;
+  color: #4fc3f7;
+}
+
+.go-btn {
+  background: linear-gradient(135deg, #4fc3f7, #ef5350);
+  border: none;
+  color: #fff;
+  padding: 12px 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-family: "Syne", sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+
+.go-btn:hover {
+  transform: scale(1.04);
+  filter: brightness(1.1);
+}
+
+.go-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.stop-btn {
+  background: rgba(239, 83, 80, 0.2);
+  border: 1px solid #ef5350;
+  color: #ef5350;
+  padding: 12px 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-family: "Syne", sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+
+.stop-btn:hover {
+  background: rgba(239, 83, 80, 0.3);
+}
+
+.error-banner {
+  background: rgba(239, 83, 80, 0.15);
+  border: 1px solid rgba(239, 83, 80, 0.4);
+  color: #ef5350;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: "JetBrains Mono", monospace;
+  margin-bottom: 16px;
+  text-align: center;
+}
