@@ -35,16 +35,42 @@ A fun AI debate simulator where two Claude instances argue about silly topics. P
 - Pick a topic, set the number of rounds, and hit "Start the debate"
 - Claude A and Claude B take turns arguing, each with their own personality
 
+## Deploy to Vercel
+
+1. **Install Vercel CLI** (if you haven't already)
+
+   ```bash
+   npm i -g vercel
+   ```
+
+2. **Set your API key**
+
+   ```bash
+   npx vercel env add ANTHROPIC_API_KEY
+   ```
+
+   Paste your key when prompted. Select all environments (Production, Preview, Development).
+
+3. **Deploy**
+
+   ```bash
+   npx vercel --prod
+   ```
+
+   Vercel will build the Vite frontend and deploy the `/api/chat` serverless function automatically.
+
 ## Project structure
 
 ```
-├── server/index.js          # Express API proxy
+├── api/chat.js              # Vercel serverless function (API proxy)
+├── server/index.js          # Express API proxy (local dev)
 ├── src/
 │   ├── api/claude.js        # Frontend API client
 │   ├── components/          # React components
 │   ├── data/                # Personas and topics
 │   └── styles/global.css    # Animations and button styles
 ├── index.html
+├── vercel.json              # Vercel routing config
 ├── vite.config.js
 └── package.json
 ```

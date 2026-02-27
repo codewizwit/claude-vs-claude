@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "concurrently -n vite,server \"vite\" \"node server/index.js\"",
     "build": "vite build",
+    "vercel-build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {

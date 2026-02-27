@@ -88,7 +88,7 @@ export default function TopicPicker({
                 fontSize: 12,
               }}
             >
-              {[4, 6, 8, 10, 12].map((n) => (
+              {[4, 6, 8, 10, 12, 16, 20, 30].map((n) => (
                 <option key={n} value={n}>
                   {n}
                 </option>
