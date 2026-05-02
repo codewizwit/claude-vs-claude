@@ -40,7 +40,7 @@ main > .section:first-child {
 }
 
 .section-dark {
-  background-color: var(--color-black);
+  background-color: var(--color-ink);
   color: var(--color-cream);
 }
 
@@ -50,7 +50,7 @@ main > .section:first-child {
 
 .section-gold {
   background-color: var(--color-gold);
-  color: var(--color-black);
+  color: var(--color-ink);
 }
 
 .section-gold .label {

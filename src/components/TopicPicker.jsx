@@ -35,57 +35,16 @@ export default function TopicPicker({
   onStart,
   onRandom,
 }) {
+  const canStart = Boolean(topic || customTopic);
+
   return (
     <section className="topic-picker">
       <div className="container">
-        <div className="topic-picker__heading">
-          <p className="topic-picker__intro">
-            Two instances of Claude talk to each other about whatever you pick.
-            You watch.
-          </p>
-        </div>
-
-        <div className="mode-grid">
-          {MODES.map((mode) => {
-            const isSelected = topic === mode.topic && !customTopic;
-            const Symbol = MODE_SYMBOLS[mode.id];
-            return (
-              <button
-                key={mode.id}
-                type="button"
-                className={`mode-card${isSelected ? " is-selected" : ""}`}
-                onClick={() => {
-                  setTopic(mode.topic);
-                  setCustomTopic("");
-                }}
-              >
-                {Symbol ? (
-                  <div className="mode-card__symbol" aria-hidden="true">
-                    <Symbol />
-                  </div>
-                ) : (
-                  <div className="mode-card__emoji" aria-hidden="true">
-                    {mode.emoji}
-                  </div>
-                )}
-                <div className="mode-card__title">{mode.title}</div>
-                <div className="mode-card__desc">{mode.desc}</div>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="divider" role="presentation">
-          <span className="divider__rule" aria-hidden="true" />
-          <span className="divider__label">Or</span>
-          <span className="divider__rule" aria-hidden="true" />
-        </div>
-
-        <div className="topic-form">
+        <div className="topic-form topic-form--top">
           <input
             type="text"
             className="topic-input"
-            placeholder="Type any topic"
+            placeholder="Type any topic, or pick one below"
             aria-label="Custom debate topic"
             value={customTopic}
             onChange={(event) => {
@@ -97,8 +56,8 @@ export default function TopicPicker({
           <div className="picker-controls">
             <button
               type="button"
-              className="btn btn-primary"
-              disabled={!topic && !customTopic}
+              className="btn btn-start"
+              disabled={!canStart}
               onClick={onStart}
             >
               Start
@@ -122,6 +81,49 @@ export default function TopicPicker({
               </select>
             </label>
           </div>
+        </div>
+
+        <div className="section-divider">
+          <span className="section-divider__label">The Modes</span>
+          <span className="section-divider__count">
+            {String(MODES.length).padStart(2, "0")} / Pick one
+          </span>
+        </div>
+        <div className="section-divider__rule" aria-hidden="true" />
+
+        <div className="mode-grid">
+          {MODES.map((mode, index) => {
+            const isSelected = topic === mode.topic && !customTopic;
+            const Symbol = MODE_SYMBOLS[mode.id];
+            const number = String(index + 1).padStart(2, "0");
+            return (
+              <button
+                key={mode.id}
+                type="button"
+                className={`mode-card${isSelected ? " is-selected" : ""}`}
+                onClick={() => {
+                  setTopic(mode.topic);
+                  setCustomTopic("");
+                }}
+              >
+                <span className="mode-card__stripe" aria-hidden="true" />
+                <div className="mode-card__top">
+                  <span className="mode-card__number">{number}</span>
+                  {Symbol ? (
+                    <div className="mode-card__symbol" aria-hidden="true">
+                      <Symbol />
+                    </div>
+                  ) : (
+                    <div className="mode-card__emoji" aria-hidden="true">
+                      {mode.emoji}
+                    </div>
+                  )}
+                </div>
+                <div className="mode-card__title">{mode.title}</div>
+                <div className="mode-card__desc">{mode.desc}</div>
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>
