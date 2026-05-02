@@ -23,7 +23,7 @@ const MODE_SYMBOLS = {
   moo: MooSymbol,
 };
 
-const ROUND_OPTIONS = [4, 6, 8, 10, 12, 16, 20, 30, 50, 100, 200];
+const ROUND_OPTIONS = [4, 6, 8];
 
 export default function TopicPicker({
   topic,
@@ -67,9 +67,6 @@ export default function TopicPicker({
           </div>
 
           <div className="picker-controls">
-            <button type="button" className="picker-link" onClick={onRandom}>
-              Surprise me
-            </button>
             <label className="rounds-label">
               <span>Rounds</span>
               <select
@@ -105,15 +102,21 @@ export default function TopicPicker({
               <button
                 key={mode.id}
                 type="button"
-                className={`mode-card${isSelected ? " is-selected" : ""}`}
+                className={`mode-card${isSelected ? " is-selected" : ""}${mode.id === "freestyle" ? " is-fave" : ""}`}
                 onClick={() => {
                   setTopic(mode.topic);
                   setCustomTopic("");
+                  onStart(mode.topic);
                 }}
               >
                 <span className="mode-card__stripe" aria-hidden="true" />
                 <div className="mode-card__top">
-                  <span className="mode-card__number">{number}</span>
+                  <span className="mode-card__number">
+                    {number}
+                    {mode.id === "freestyle" && (
+                      <span className="mode-card__fave"> · WIZWIT FAVE</span>
+                    )}
+                  </span>
                   {Symbol ? (
                     <div className="mode-card__symbol" aria-hidden="true">
                       <Symbol />

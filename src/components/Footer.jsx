@@ -5,7 +5,6 @@ export default function Footer() {
         <p className="site-footer__line">
           No humans were harmed in the making of this debate.
         </p>
-        <p className="site-footer__byline">By Wizwit</p>
       </div>
     </footer>
   );

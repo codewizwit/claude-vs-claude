@@ -61,7 +61,7 @@
   --space-section: clamp(2.5rem, 2rem + 2.5vw, 3.5rem);
 
   /* Layout */
-  --max-width: 72rem;
+  --max-width: 88rem;
   --max-width-prose: 48rem;
   --max-width-narrow: 36rem;
   --gutter: clamp(1.25rem, 1rem + 1.25vw, 2.5rem);
@@ -96,10 +96,10 @@
   --z-grain: 1000;
 
   /* ---- claude-vs-claude project tokens ---- */
-  /* Per-piece pop accents: hot pink (Claude A) + teal (Claude B). */
-  --cvc-color-plum: #d81b60;
-  --cvc-color-plum-soft: rgba(216, 27, 96, 0.06);
-  --cvc-color-plum-border: rgba(216, 27, 96, 0.3);
+  /* Per-piece pop accents: violet (Claude A) + teal (Claude B). */
+  --cvc-color-plum: #7c3aed;
+  --cvc-color-plum-soft: rgba(124, 58, 237, 0.06);
+  --cvc-color-plum-border: rgba(124, 58, 237, 0.3);
   --cvc-color-teal: #1f6b6b;
   --cvc-color-teal-soft: rgba(31, 107, 107, 0.06);
   --cvc-color-teal-border: rgba(31, 107, 107, 0.3);

@@ -17,7 +17,7 @@ export default function ClaudeVsClaude() {
   const [customTopic, setCustomTopic] = useState("");
   const [turnCount, setTurnCount] = useState(0);
   const [typing, setTyping] = useState(null);
-  const [maxTurns, setMaxTurns] = useState(8);
+  const [maxTurns, setMaxTurns] = useState(6);
   const [error, setError] = useState(null);
   const genRef = useRef(0);
 
@@ -116,8 +116,8 @@ export default function ClaudeVsClaude() {
     [maxTurns],
   );
 
-  const handleStart = () => {
-    const t = customTopic || topic;
+  const handleStart = (overrideTopic) => {
+    const t = overrideTopic || customTopic || topic;
     if (!t) return;
     runConversation(t);
   };

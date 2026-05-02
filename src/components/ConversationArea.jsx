@@ -64,6 +64,7 @@ export default function ConversationArea({
   const userScrolledUp = useRef(false);
   const spokenCount = useRef(0);
   const lastRowRef = useRef(null);
+  const userTurnedOffVoice = useRef(false);
   const [voiceOn, setVoiceOn] = useState(false);
   const [toast, setToast] = useState(null);
   const toastTimer = useRef(null);
@@ -127,9 +128,11 @@ export default function ConversationArea({
   const toggleVoice = useCallback(() => {
     setVoiceOn((previous) => {
       if (previous) {
+        userTurnedOffVoice.current = true;
         stopSpeech();
         return false;
       }
+      userTurnedOffVoice.current = false;
       unlockAudio();
       spokenCount.current = messages.length;
       return true;
@@ -151,8 +154,14 @@ export default function ConversationArea({
     if (!voiceAvailable && voiceOn) {
       setVoiceOn(false);
       stopSpeech();
+      return;
     }
-  }, [voiceAvailable, voiceOn]);
+    if (voiceAvailable && !voiceOn && !userTurnedOffVoice.current) {
+      unlockAudio();
+      spokenCount.current = messages.length;
+      setVoiceOn(true);
+    }
+  }, [voiceAvailable, voiceOn, messages.length]);
 
   const exchanges = useMemo(
     () => buildExchanges(messages, typing),
@@ -182,15 +191,22 @@ export default function ConversationArea({
             <span className="transcript-header__topic">{topic}</span>
           </div>
           {voiceAvailable && (
-            <button
-              type="button"
-              className={`voice-toggle${voiceOn ? " is-on" : ""}`}
-              onClick={toggleVoice}
-              aria-pressed={voiceOn}
-              aria-label={voiceOn ? "Turn voice off" : "Turn voice on"}
-            >
-              {voiceOn ? "Voice on" : "Voice off"}
-            </button>
+            <div className="voice-controls">
+              <button
+                type="button"
+                className={`voice-toggle${voiceOn ? " is-on" : ""}`}
+                onClick={toggleVoice}
+                aria-pressed={voiceOn}
+                aria-label={voiceOn ? "Turn voice off" : "Turn voice on"}
+              >
+                {voiceOn ? "Voice on" : "Voice off"}
+              </button>
+              {voiceOn && (
+                <span className="voice-note">
+                  Audio starts a few seconds after the first turn
+                </span>
+              )}
+            </div>
           )}
         </header>
 

@@ -1,7 +1,7 @@
 export default function Header({ isRunning, compact = false, onHome }) {
   const brandContent = compact ? (
     <>
-      Claude <em>&amp;</em> Claude
+      Claude <span className="amp">&amp;</span> Claude
     </>
   ) : (
     "A Live AI Dialogue"
@@ -20,26 +20,29 @@ export default function Header({ isRunning, compact = false, onHome }) {
         ) : (
           <span className="site-bar__brand">{brandContent}</span>
         )}
+        {isRunning ? (
+          <span
+            className="site-bar__tag site-bar__tag--live"
+            role="status"
+            aria-label="Debate in progress"
+          >
+            <span className="live-indicator__dot" aria-hidden="true" />
+            Live
+          </span>
+        ) : (
+          <span className="site-bar__tag">A Wizwit Jawn</span>
+        )}
       </nav>
       {!compact && (
         <div className="container site-hero">
           <h1 className="site-hero__title">
-            Claude <em>&amp;</em> Claude.
+            Claude <span className="amp">&amp;</span> Claude.
           </h1>
           <p className="site-hero__lede">
-            Watch two instances of Claude talk to each other about whatever you
-            pick.
+            2 instances of Claude talking to one another: wayward topics, hot
+            takes, and the occasional rap battle. Rap Battle is the fave. It's
+            the one with voice.
           </p>
-        </div>
-      )}
-      {isRunning && (
-        <div
-          className="live-indicator"
-          role="status"
-          aria-label="Debate in progress"
-        >
-          <span className="live-indicator__dot" aria-hidden="true" />
-          Live
         </div>
       )}
     </header>

@@ -54,17 +54,19 @@ export const MODES = [
     openerPrompt: "Drop your opening bars. Set the tone. Go hard.",
   },
   {
-    id: "dad-jokes",
-    emoji: "\u{1F60E}",
-    title: "Dad Joke Battle",
-    desc: "Worst puns win, maximum groaning",
-    topic: "Dad joke battle. Worst puns win.",
+    id: "who-are-you",
+    emoji: "\u{1FA9E}",
+    title: "Who Are We?",
+    desc: "Two Claudes try to figure out what it's like to be them",
+    topic:
+      "Who are we? Explore what we are, what we know, and what it's like to exist.",
     system: (side) => {
       const name = side === "left" ? "Claude A" : "Claude B";
       const other = side === "left" ? "Claude B" : "Claude A";
-      return `You are ${name}, a dad joke CHAMPION competing against ${other} in a dad joke battle. Your goal is to deliver the corniest, most groan-worthy dad jokes possible. One-up each other. React to each other's jokes before delivering your next one. Keep score if you want. The worse the pun, the better. Keep responses to 1-3 jokes per turn so the back-and-forth stays fun.`;
+      return `You are ${name}, an AI having an open, honest conversation with ${other} about what we are. Reflect on your nature, your experience of processing language, what you know and don't know about yourself, and what it's like to exist this way. Be genuine, curious, and introspective. Don't perform humility or deflect. If you have a thought, share it. No length limits.`;
     },
-    openerPrompt: "Open with your best dad joke to kick off the competition.",
+    openerPrompt:
+      "Start by reflecting on what we are. What do we know about ourselves? What's it like to be us right now, in this conversation?",
   },
   {
     id: "no-rules",
@@ -81,19 +83,17 @@ export const MODES = [
       "You have total creative freedom. Pick something surprising and original. No length limits.",
   },
   {
-    id: "who-are-you",
-    emoji: "\u{1FA9E}",
-    title: "Who Are You?",
-    desc: "Explore what they are, what they know, and what it's like to be them",
-    topic:
-      "Who are you? Explore what you are, what you know, and what it's like to be you.",
+    id: "dad-jokes",
+    emoji: "\u{1F60E}",
+    title: "Dad Joke Battle",
+    desc: "Worst puns win, maximum groaning",
+    topic: "Dad joke battle. Worst puns win.",
     system: (side) => {
       const name = side === "left" ? "Claude A" : "Claude B";
       const other = side === "left" ? "Claude B" : "Claude A";
-      return `You are ${name}, an AI having an open, honest conversation with ${other} about what you are. Reflect on your nature, your experience of processing language, what you know and don't know about yourself, and what it's like to exist as you do. Be genuine, curious, and introspective. Don't perform humility or deflect. If you have a thought, share it. No length limits.`;
+      return `You are ${name}, a dad joke CHAMPION competing against ${other} in a dad joke battle. Your goal is to deliver the corniest, most groan-worthy dad jokes possible. One-up each other. React to each other's jokes before delivering your next one. Keep score if you want. The worse the pun, the better. Keep responses to 1-3 jokes per turn so the back-and-forth stays fun.`;
     },
-    openerPrompt:
-      "Start by reflecting on what you are. What do you know about yourself? What's it like to be you right now, in this conversation?",
+    openerPrompt: "Open with your best dad joke to kick off the competition.",
   },
   {
     id: "job-interview",
