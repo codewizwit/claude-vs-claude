@@ -29,8 +29,43 @@ export function unlockAudio() {
   }
 }
 
+function stripMarkdownForSpeech(text) {
+  const stripped = text
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/`([^`\n]+)`/g, "$1")
+    .replace(/\*\*([^*\n]+)\*\*/g, "$1")
+    .replace(/\*([^*\n]+)\*/g, "$1")
+    .replace(/_([^_\n]+)_/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^[-*+]\s+/gm, "")
+    .replace(/[*_`]/g, "");
+
+  // Normalize line breaks into pauseable punctuation so the TTS breathes
+  // between lines and longer between paragraphs.
+  return stripped
+    .split(/\n{2,}/)
+    .map((paragraph) =>
+      paragraph
+        .split(/\n/)
+        .map((line) => {
+          const trimmed = line.trim();
+          if (!trimmed) return "";
+          return /[.!?,;:—-]$/.test(trimmed) ? trimmed : `${trimmed},`;
+        })
+        .filter(Boolean)
+        .join(" ")
+        .replace(/,$/, "."),
+    )
+    .filter(Boolean)
+    .join(". ... ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export async function speakMessage(text, side) {
-  pending.push({ text, side });
+  const cleaned = stripMarkdownForSpeech(text);
+  if (!cleaned) return;
+  pending.push({ text: cleaned, side });
   startFetching();
 }
 

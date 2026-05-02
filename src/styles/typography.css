@@ -3,55 +3,9 @@
    Self-hosted WOFF2, type scale, label/link styles.
    ============================================ */
 
-/* ---- Font Faces (self-hosted WOFF2) ---- */
-
-@font-face {
-  font-family: "Lora";
-  src: url("/fonts/lora-regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
-    U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: "Lora";
-  src: url("/fonts/lora-bold.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
-    U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: "Lora";
-  src: url("/fonts/lora-italic.woff2") format("woff2");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
-    U+2215, U+FEFF, U+FFFD;
-}
-
-@font-face {
-  font-family: "Inter";
-  src: url("/fonts/inter-latin.woff2") format("woff2");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-  unicode-range:
-    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
-    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
-    U+2215, U+FEFF, U+FFFD;
-}
+/* ---- Font Faces ----
+   Fraunces is loaded from Google Fonts via index.html. JetBrains Mono is
+   self-hosted below. */
 
 @font-face {
   font-family: "JetBrains Mono";
@@ -105,17 +59,17 @@ h4,
 /* ---- Label / Overline ---- */
 
 .label {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.16em;
   color: var(--color-text-secondary);
   margin-bottom: var(--space-sm);
 }
 
 .label-gold {
-  color: var(--color-gold-dark);
+  color: var(--cvc-color-plum);
 }
 
 .label-plum {
@@ -160,7 +114,7 @@ h4,
 .link {
   color: var(--color-link);
   text-decoration: underline;
-  text-decoration-color: var(--color-gold);
+  text-decoration-color: var(--cvc-color-plum);
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
   transition:
@@ -171,18 +125,18 @@ h4,
 .link:hover,
 .link:focus-visible {
   color: var(--color-link-hover);
-  text-decoration-color: var(--color-gold-dark);
+  text-decoration-color: var(--cvc-color-plum);
 }
 
 .link-light {
   color: var(--color-cream);
   text-decoration: underline;
-  text-decoration-color: var(--color-gold);
+  text-decoration-color: var(--cvc-color-plum);
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
 }
 
 .link-light:hover,
 .link-light:focus-visible {
-  color: var(--color-gold);
+  color: var(--cvc-color-plum);
 }

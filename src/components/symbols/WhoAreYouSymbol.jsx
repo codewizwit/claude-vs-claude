@@ -31,7 +31,7 @@ export default function WhoAreYouSymbol({ className = "" }) {
         cx="48"
         cy="20"
         r="2.6"
-        fill="#C8973E"
+        fill="#6B3A55"
       />
     </svg>
   );

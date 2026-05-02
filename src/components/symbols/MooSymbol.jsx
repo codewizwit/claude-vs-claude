@@ -75,7 +75,7 @@ export default function MooSymbol({ className = "" }) {
       <rect x="30.5" y="54" width="3" height="3" fill="#6B3A55" />
 
       {/* Gold bell — the family signature dot, here as the cowbell */}
-      <circle className="moo-bell" cx="32" cy="59" r="3" fill="#C8973E" />
+      <circle className="moo-bell" cx="32" cy="59" r="3" fill="#6B3A55" />
     </svg>
   );
 }

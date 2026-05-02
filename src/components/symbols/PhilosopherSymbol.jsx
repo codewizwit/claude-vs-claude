@@ -44,7 +44,7 @@ export default function PhilosopherSymbol({ className = "" }) {
 
       {/* Orbiting gold dot, animated */}
       <g className="philosopher-orbit" style={{ transformOrigin: "32px 32px" }}>
-        <circle cx="58" cy="32" r="3" fill="#C8973E" />
+        <circle cx="58" cy="32" r="3" fill="#6B3A55" />
       </g>
     </svg>
   );

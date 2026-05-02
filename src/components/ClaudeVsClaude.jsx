@@ -33,9 +33,12 @@ export default function ClaudeVsClaude() {
       const mode = findMode(selectedTopic);
       const history = [];
 
+      const lengthCap =
+        "IMPORTANT: Keep your response concise. Aim for about 4 short paragraphs or stanzas maximum, roughly 100-150 words. Land your point and stop.";
+
       const getSystem = (side) => {
-        if (mode) return mode.system(side);
-        return PERSONAS[side].system;
+        const base = mode ? mode.system(side) : PERSONAS[side].system;
+        return `${base}\n\n${lengthCap}`;
       };
 
       const openerPrompt = mode
@@ -126,6 +129,16 @@ export default function ClaudeVsClaude() {
     stopSpeech();
   };
 
+  const goHome = () => {
+    genRef.current++;
+    stopSpeech();
+    setMessages([]);
+    setTurnCount(0);
+    setError(null);
+    setIsRunning(false);
+    setTyping(null);
+  };
+
   const randomTopic = () => {
     const t = TOPIC_TEXTS[Math.floor(Math.random() * TOPIC_TEXTS.length)];
     setTopic(t);
@@ -154,7 +167,11 @@ export default function ClaudeVsClaude() {
     <div className="app-shell">
       <GrainOverlay />
 
-      <Header isRunning={isRunning} />
+      <Header
+        isRunning={isRunning}
+        compact={messages.length > 0 || isRunning}
+        onHome={goHome}
+      />
 
       <main className="app-main">
         {!isRunning && messages.length === 0 && (
@@ -179,13 +196,7 @@ export default function ClaudeVsClaude() {
             maxTurns={maxTurns}
             isRunning={isRunning}
             onStop={handleStop}
-            onNewTopic={() => {
-              genRef.current++;
-              stopSpeech();
-              setMessages([]);
-              setTurnCount(0);
-              setError(null);
-            }}
+            onNewTopic={goHome}
             onRematch={() => {
               stopSpeech();
               runConversation(activeTopic);

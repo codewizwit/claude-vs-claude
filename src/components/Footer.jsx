@@ -5,17 +5,7 @@ export default function Footer() {
         <p className="site-footer__line">
           No humans were harmed in the making of this debate.
         </p>
-        <p className="site-footer__byline">
-          By{" "}
-          <a
-            className="site-footer__link"
-            href="https://codewizwit.com"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Alexandra Kelstrom
-          </a>
-        </p>
+        <p className="site-footer__byline">By Wizwit</p>
       </div>
     </footer>
   );

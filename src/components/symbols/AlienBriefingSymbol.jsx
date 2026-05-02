@@ -53,7 +53,7 @@ export default function AlienBriefingSymbol({ className = "" }) {
         cx="32"
         cy="14"
         r="2.6"
-        fill="#C8973E"
+        fill="#6B3A55"
       />
     </svg>
   );

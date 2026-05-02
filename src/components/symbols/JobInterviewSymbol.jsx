@@ -58,7 +58,7 @@ export default function JobInterviewSymbol({ className = "" }) {
         cx="48"
         cy="46"
         r="2.8"
-        fill="#C8973E"
+        fill="#6B3A55"
       />
     </svg>
   );

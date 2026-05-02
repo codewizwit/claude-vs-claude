@@ -48,7 +48,7 @@ export default function NoRulesSymbol({ className = "" }) {
         cx="54"
         cy="10"
         r="3"
-        fill="#C8973E"
+        fill="#6B3A55"
       />
 
       {/* Tiny cream tick — a stray mark, asymmetric */}

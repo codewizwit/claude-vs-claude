@@ -41,32 +41,37 @@ export default function TopicPicker({
     <section className="topic-picker">
       <div className="container">
         <div className="topic-form topic-form--top">
-          <input
-            type="text"
-            className="topic-input"
-            placeholder="Type any topic, or pick one below"
-            aria-label="Custom debate topic"
-            value={customTopic}
-            onChange={(event) => {
-              setCustomTopic(event.target.value);
-              setTopic("");
-            }}
-          />
-
-          <div className="picker-controls">
+          <div className="topic-form__bar">
+            <input
+              type="text"
+              className="topic-input"
+              placeholder="Type any topic, or pick one below"
+              aria-label="Custom debate topic"
+              value={customTopic}
+              onChange={(event) => {
+                setCustomTopic(event.target.value);
+                setTopic("");
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && canStart) onStart();
+              }}
+            />
             <button
               type="button"
-              className="btn btn-start"
+              className="btn-start"
               disabled={!canStart}
               onClick={onStart}
             >
               Start
             </button>
-            <button type="button" className="btn btn-ghost" onClick={onRandom}>
-              Random
+          </div>
+
+          <div className="picker-controls">
+            <button type="button" className="picker-link" onClick={onRandom}>
+              Surprise me
             </button>
             <label className="rounds-label">
-              Rounds
+              <span>Rounds</span>
               <select
                 value={maxTurns}
                 onChange={(event) => setMaxTurns(Number(event.target.value))}

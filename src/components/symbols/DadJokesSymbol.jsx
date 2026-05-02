@@ -19,7 +19,7 @@ export default function DadJokesSymbol({ className = "" }) {
              L 40 36
              L 32 56
              L 24 36 Z"
-          fill="#C8973E"
+          fill="#6B3A55"
         />
 
         {/* Cream diagonal stripe across the tie */}
@@ -44,7 +44,7 @@ export default function DadJokesSymbol({ className = "" }) {
         cx="48"
         cy="50"
         r="2.6"
-        fill="#C8973E"
+        fill="#6B3A55"
       />
     </svg>
   );

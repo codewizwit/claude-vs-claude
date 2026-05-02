@@ -61,7 +61,7 @@ export default function FreestyleSymbol({ className = "" }) {
         cx="48"
         cy="14"
         r="2.8"
-        fill="#C8973E"
+        fill="#6B3A55"
       />
     </svg>
   );

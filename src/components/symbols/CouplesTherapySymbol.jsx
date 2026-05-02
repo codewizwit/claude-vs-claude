@@ -44,7 +44,7 @@ export default function CouplesTherapySymbol({ className = "" }) {
         cx="32"
         cy="34"
         r="2.6"
-        fill="#C8973E"
+        fill="#6B3A55"
       />
     </svg>
   );
