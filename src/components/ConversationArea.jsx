@@ -1,5 +1,11 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState, useCallback } from "react";
 import { PERSONAS } from "../data/personas.js";
+import {
+  speakMessage,
+  stopSpeech,
+  unlockAudio,
+  onTtsError,
+} from "../api/tts.js";
 import MessageBubble from "./MessageBubble.jsx";
 import TypingIndicator from "./TypingIndicator.jsx";
 
@@ -13,115 +19,177 @@ export default function ConversationArea({
   onStop,
   onNewTopic,
   onRematch,
+  onDownload,
   error,
 }) {
   const scrollRef = useRef(null);
+  const userScrolledUp = useRef(false);
+  const spokenCount = useRef(0);
+  const [voiceOn, setVoiceOn] = useState(false);
+  const [toast, setToast] = useState(null);
+  const toastTimer = useRef(null);
+
+  const showToast = useCallback((message) => {
+    setToast(message);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), 4000);
+  }, []);
 
   useEffect(() => {
-    if (scrollRef.current) {
+    onTtsError((message) => {
+      showToast(message);
+      setVoiceOn(false);
+      stopSpeech();
+    });
+    return () => onTtsError(null);
+  }, [showToast]);
+
+  useEffect(() => {
+    const element = scrollRef.current;
+    if (!element) return;
+    const handleScroll = () => {
+      userScrolledUp.current =
+        element.scrollHeight - element.scrollTop - element.clientHeight > 80;
+    };
+    element.addEventListener("scroll", handleScroll);
+    return () => element.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (scrollRef.current && !userScrolledUp.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, typing]);
 
+  useEffect(() => {
+    if (messages.length === 0) {
+      spokenCount.current = 0;
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    if (!voiceOn) return;
+    if (messages.length <= spokenCount.current) return;
+    const fresh = messages.slice(spokenCount.current);
+    spokenCount.current = messages.length;
+    fresh.forEach((message) => speakMessage(message.text, message.side));
+  }, [messages, voiceOn]);
+
+  const toggleVoice = useCallback(() => {
+    setVoiceOn((previous) => {
+      if (previous) {
+        stopSpeech();
+        return false;
+      }
+      unlockAudio();
+      spokenCount.current = messages.length;
+      return true;
+    });
+  }, [messages.length]);
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", stopSpeech);
+    return () => {
+      stopSpeech();
+      window.removeEventListener("beforeunload", stopSpeech);
+    };
+  }, []);
+
+  const typingSideClass = typing === "left" ? "left" : "right";
+
   return (
-    <section style={{ maxWidth: 720, margin: "0 auto", padding: "0 20px" }}>
-      {/* Topic banner */}
-      <div
-        style={{
-          textAlign: "center",
-          padding: "10px 20px",
-          marginBottom: 20,
-          background: "rgba(255,255,255,0.03)",
-          borderRadius: 8,
-          border: "1px solid rgba(255,255,255,0.06)",
-        }}
-      >
-        <span style={{ fontSize: 11, color: "#555", letterSpacing: 2, textTransform: "uppercase" }}>
-          Topic:
-        </span>{" "}
-        <span style={{ color: "#ccc", fontSize: 14 }}>{topic}</span>
-        <span style={{ color: "#444", fontSize: 12, marginLeft: 12 }}>
-          Round {turnCount}/{maxTurns}
-        </span>
-      </div>
-
-      {/* Error banner */}
-      {error && (
-        <div role="alert" className="error-banner">
-          {error}
-        </div>
-      )}
-
-      {/* Messages */}
-      <div
-        ref={scrollRef}
-        aria-live="polite"
-        style={{
-          maxHeight: "55vh",
-          overflowY: "auto",
-          paddingRight: 8,
-          scrollBehavior: "smooth",
-        }}
-      >
-        {messages.map((msg, i) => (
-          <MessageBubble key={i} side={msg.side} text={msg.text} />
-        ))}
-
-        {/* Typing indicator */}
-        {typing && (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: typing === "left" ? "flex-start" : "flex-end",
-              marginBottom: 16,
-            }}
-          >
-            <div
-              style={{
-                padding: "14px 18px",
-                borderRadius: typing === "left" ? "4px 16px 16px 16px" : "16px 4px 16px 16px",
-                background: PERSONAS[typing].bubbleBg,
-                border: `1px solid ${PERSONAS[typing].accent}22`,
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 11,
-                  color: PERSONAS[typing].accent,
-                  fontWeight: 600,
-                  marginBottom: 6,
-                  letterSpacing: 1,
-                  textTransform: "uppercase",
-                }}
-              >
-                {PERSONAS[typing].emoji} {PERSONAS[typing].name}
-              </div>
-              <TypingIndicator color={PERSONAS[typing].accent} />
-            </div>
+    <section className="conversation">
+      <div className="container-conversation">
+        {toast && (
+          <div className="toast" role="status">
+            {toast}
           </div>
         )}
-      </div>
 
-      {/* Controls */}
-      <div style={{ display: "flex", justifyContent: "center", gap: 12, padding: "20px 0" }}>
-        {isRunning ? (
-          <button className="stop-btn" onClick={onStop}>
-            ■ Stop
+        <div className="topic-banner">
+          <div className="topic-banner__copy">
+            <span className="topic-banner__meta">
+              Topic &middot; Round {turnCount} / {maxTurns}
+            </span>
+            <span className="topic-banner__topic">{topic}</span>
+          </div>
+          <button
+            type="button"
+            className={`voice-toggle${voiceOn ? " is-on" : ""}`}
+            onClick={toggleVoice}
+            aria-pressed={voiceOn}
+            aria-label={voiceOn ? "Turn voice off" : "Turn voice on"}
+          >
+            {voiceOn ? "Voice on" : "Voice off"}
           </button>
-        ) : (
-          <>
-            <button className="go-btn" onClick={onNewTopic}>
-              ↻ New Topic
-            </button>
-            <button
-              className="go-btn"
-              onClick={onRematch}
-              style={{ background: "linear-gradient(135deg, #ef5350, #ff9800)" }}
-            >
-              ⚡ Rematch
-            </button>
-          </>
+        </div>
+
+        {error && (
+          <div role="alert" className="error-banner">
+            {error}
+          </div>
         )}
+
+        <div ref={scrollRef} aria-live="polite" className="messages-scroll">
+          {messages.map((message, index) => (
+            <MessageBubble
+              key={index}
+              side={message.side}
+              text={message.text}
+            />
+          ))}
+
+          {typing && (
+            <div className={`message-row message-row--${typingSideClass}`}>
+              <div
+                className={`message-bubble message-bubble--${typingSideClass}`}
+              >
+                <div
+                  className={`message-bubble__name message-bubble__name--${typingSideClass}`}
+                >
+                  {PERSONAS[typing].name}
+                </div>
+                <TypingIndicator side={typing} />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="conversation-controls">
+          {isRunning ? (
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={onStop}
+            >
+              Stop
+            </button>
+          ) : (
+            <>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={onNewTopic}
+              >
+                New topic
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={onRematch}
+              >
+                Rematch
+              </button>
+              <button
+                type="button"
+                className="btn btn-ghost"
+                onClick={onDownload}
+              >
+                Download
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </section>
   );

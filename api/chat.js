@@ -1,3 +1,5 @@
+import { fetchChatCompletion } from "../lib/anthropic.js";
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -10,28 +12,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: req.body.model,
-        max_tokens: req.body.max_tokens,
-        system: req.body.system,
-        messages: req.body.messages,
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.text();
-      return res.status(response.status).json({ error });
-    }
-
-    const data = await response.json();
-    res.json(data);
+    const result = await fetchChatCompletion(API_KEY, req.body);
+    if (!result.ok)
+      return res.status(result.status).json({ error: result.error });
+    res.json(result.data);
   } catch (err) {
     console.error("Proxy error:", err.message);
     res.status(500).json({ error: "Internal proxy error" });

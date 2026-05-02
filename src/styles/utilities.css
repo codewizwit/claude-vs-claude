@@ -1,0 +1,168 @@
+/* ============================================
+   claude-vs-claude: Layout Utilities
+   ============================================ */
+
+/* ---- Container ---- */
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.container-narrow {
+  max-width: var(--max-width-prose);
+}
+
+.container-conversation {
+  width: 100%;
+  max-width: var(--cvc-max-width-conversation);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---- Section Spacing ---- */
+
+.section {
+  padding-block: var(--space-section);
+}
+
+main > .section:first-child {
+  padding-top: calc(var(--space-section) - 0.5rem);
+}
+
+/* ---- Section Color Blocks ---- */
+
+.section-cream {
+  background-color: var(--color-cream);
+  color: var(--color-text);
+}
+
+.section-dark {
+  background-color: var(--color-black);
+  color: var(--color-cream);
+}
+
+.section-dark .label {
+  color: var(--color-gray-light);
+}
+
+.section-gold {
+  background-color: var(--color-gold);
+  color: var(--color-black);
+}
+
+.section-gold .label {
+  color: rgba(26, 26, 26, 0.6);
+}
+
+.section-cream + .section-cream {
+  padding-top: 0;
+}
+
+.section-dark + .section-dark {
+  padding-top: 0;
+}
+
+/* ---- Flexbox ---- */
+
+.flex {
+  display: flex;
+}
+.flex-col {
+  flex-direction: column;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.items-center {
+  align-items: center;
+}
+.items-start {
+  align-items: flex-start;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.gap-xs {
+  gap: var(--space-xs);
+}
+.gap-sm {
+  gap: var(--space-sm);
+}
+.gap-md {
+  gap: var(--space-md);
+}
+.gap-lg {
+  gap: var(--space-lg);
+}
+
+/* ---- Spacing Helpers ---- */
+
+.mt-xs {
+  margin-top: var(--space-xs);
+}
+.mt-sm {
+  margin-top: var(--space-sm);
+}
+.mt-md {
+  margin-top: var(--space-md);
+}
+.mt-lg {
+  margin-top: var(--space-lg);
+}
+.mt-xl {
+  margin-top: var(--space-xl);
+}
+.mb-xs {
+  margin-bottom: var(--space-xs);
+}
+.mb-sm {
+  margin-bottom: var(--space-sm);
+}
+
+/* ---- Text Alignment ---- */
+
+.text-center {
+  text-align: center;
+}
+
+/* ---- Visibility ---- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ---- Reveal Animation ---- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

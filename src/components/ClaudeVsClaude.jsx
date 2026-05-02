@@ -1,11 +1,14 @@
 import { useState, useRef, useCallback } from "react";
 import { PERSONAS } from "../data/personas.js";
-import { TOPICS } from "../data/topics.js";
+import { TOPIC_TEXTS, findMode } from "../data/topics.js";
 import { callClaude } from "../api/claude.js";
+import { exportHtml } from "../utils/exportHtml.js";
+import { stopSpeech } from "../api/tts.js";
 import Header from "./Header.jsx";
 import TopicPicker from "./TopicPicker.jsx";
 import ConversationArea from "./ConversationArea.jsx";
 import Footer from "./Footer.jsx";
+import GrainOverlay from "./GrainOverlay.jsx";
 
 export default function ClaudeVsClaude() {
   const [messages, setMessages] = useState([]);
@@ -16,32 +19,37 @@ export default function ClaudeVsClaude() {
   const [typing, setTyping] = useState(null);
   const [maxTurns, setMaxTurns] = useState(8);
   const [error, setError] = useState(null);
-  const stopRef = useRef(false);
+  const genRef = useRef(0);
 
   const runConversation = useCallback(
     async (selectedTopic) => {
-      stopRef.current = false;
+      genRef.current++;
+      const myGen = genRef.current;
       setIsRunning(true);
       setMessages([]);
       setTurnCount(0);
       setError(null);
 
+      const mode = findMode(selectedTopic);
       const history = [];
 
+      const getSystem = (side) => {
+        if (mode) return mode.system(side);
+        return PERSONAS[side].system;
+      };
+
+      const openerPrompt = mode
+        ? mode.openerPrompt
+        : `The topic is: "${selectedTopic}". Give your hot take to start the debate. Remember, keep it to 2-3 sentences.`;
+
       try {
-        // First message: Claude A kicks it off
         setTyping("left");
         const opener = await callClaude(
-          [
-            {
-              role: "user",
-              content: `The topic is: "${selectedTopic}". Give your hot take to start the debate. Remember, keep it to 2-3 sentences.`,
-            },
-          ],
-          PERSONAS.left.system
+          [{ role: "user", content: openerPrompt }],
+          getSystem("left"),
         );
 
-        if (stopRef.current) return;
+        if (myGen !== genRef.current) return;
 
         const firstMsg = { side: "left", text: opener };
         history.push(firstMsg);
@@ -52,16 +60,13 @@ export default function ClaudeVsClaude() {
         let currentSide = "right";
 
         for (let turn = 1; turn < maxTurns; turn++) {
-          if (stopRef.current) break;
+          if (myGen !== genRef.current) break;
 
           await new Promise((r) => setTimeout(r, 800));
-          if (stopRef.current) break;
+          if (myGen !== genRef.current) break;
 
           setTyping(currentSide);
 
-          const persona = PERSONAS[currentSide];
-
-          // Build message history for this Claude's perspective
           const apiMessages = [];
           for (const msg of history) {
             if (msg.side === currentSide) {
@@ -71,12 +76,13 @@ export default function ClaudeVsClaude() {
             }
           }
 
-          // If the last message is from "assistant" perspective, add a user prompt
-          if (apiMessages.length > 0 && apiMessages[apiMessages.length - 1].role === "assistant") {
-            apiMessages.push({ role: "user", content: "Continue the debate." });
+          if (
+            apiMessages.length > 0 &&
+            apiMessages[apiMessages.length - 1].role === "assistant"
+          ) {
+            apiMessages.push({ role: "user", content: "Continue." });
           }
 
-          // Ensure first message is always "user"
           if (apiMessages.length > 0 && apiMessages[0].role === "assistant") {
             apiMessages.unshift({
               role: "user",
@@ -84,8 +90,8 @@ export default function ClaudeVsClaude() {
             });
           }
 
-          const reply = await callClaude(apiMessages, persona.system);
-          if (stopRef.current) break;
+          const reply = await callClaude(apiMessages, getSystem(currentSide));
+          if (myGen !== genRef.current) break;
 
           const newMsg = { side: currentSide, text: reply };
           history.push(newMsg);
@@ -96,13 +102,15 @@ export default function ClaudeVsClaude() {
           currentSide = currentSide === "left" ? "right" : "left";
         }
       } catch (err) {
-        setError(err.message);
+        if (myGen === genRef.current) setError(err.message);
       } finally {
-        setTyping(null);
-        setIsRunning(false);
+        if (myGen === genRef.current) {
+          setTyping(null);
+          setIsRunning(false);
+        }
       }
     },
-    [maxTurns]
+    [maxTurns],
   );
 
   const handleStart = () => {
@@ -112,75 +120,81 @@ export default function ClaudeVsClaude() {
   };
 
   const handleStop = () => {
-    stopRef.current = true;
+    genRef.current++;
     setIsRunning(false);
     setTyping(null);
+    stopSpeech();
   };
 
   const randomTopic = () => {
-    const t = TOPICS[Math.floor(Math.random() * TOPICS.length)];
+    const t = TOPIC_TEXTS[Math.floor(Math.random() * TOPIC_TEXTS.length)];
     setTopic(t);
     setCustomTopic("");
+  };
+
+  const handleDownload = () => {
+    const html = exportHtml({
+      messages,
+      topic: customTopic || topic,
+      turnCount,
+      maxTurns,
+    });
+    const blob = new Blob([html], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "claude-vs-claude-debate.html";
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   const activeTopic = customTopic || topic;
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#0a0a0f",
-        color: "#e0e0e0",
-        fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      {/* Scanline overlay */}
-      <div
-        style={{
-          position: "fixed",
-          inset: 0,
-          pointerEvents: "none",
-          zIndex: 100,
-          background:
-            "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px)",
-        }}
-      />
+    <div className="app-shell">
+      <GrainOverlay />
 
       <Header isRunning={isRunning} />
 
-      {!isRunning && messages.length === 0 && (
-        <TopicPicker
-          topic={topic}
-          setTopic={setTopic}
-          customTopic={customTopic}
-          setCustomTopic={setCustomTopic}
-          maxTurns={maxTurns}
-          setMaxTurns={setMaxTurns}
-          onStart={handleStart}
-          onRandom={randomTopic}
-        />
-      )}
+      <main className="app-main">
+        {!isRunning && messages.length === 0 && (
+          <TopicPicker
+            topic={topic}
+            setTopic={setTopic}
+            customTopic={customTopic}
+            setCustomTopic={setCustomTopic}
+            maxTurns={maxTurns}
+            setMaxTurns={setMaxTurns}
+            onStart={handleStart}
+            onRandom={randomTopic}
+          />
+        )}
 
-      {(messages.length > 0 || isRunning) && (
-        <ConversationArea
-          messages={messages}
-          typing={typing}
-          topic={activeTopic}
-          turnCount={turnCount}
-          maxTurns={maxTurns}
-          isRunning={isRunning}
-          onStop={handleStop}
-          onNewTopic={() => {
-            setMessages([]);
-            setTurnCount(0);
-            setError(null);
-          }}
-          onRematch={() => runConversation(activeTopic)}
-          error={error}
-        />
-      )}
+        {(messages.length > 0 || isRunning) && (
+          <ConversationArea
+            messages={messages}
+            typing={typing}
+            topic={activeTopic}
+            turnCount={turnCount}
+            maxTurns={maxTurns}
+            isRunning={isRunning}
+            onStop={handleStop}
+            onNewTopic={() => {
+              genRef.current++;
+              stopSpeech();
+              setMessages([]);
+              setTurnCount(0);
+              setError(null);
+            }}
+            onRematch={() => {
+              stopSpeech();
+              runConversation(activeTopic);
+            }}
+            onDownload={handleDownload}
+            error={error}
+          />
+        )}
+      </main>
 
       <Footer />
     </div>

@@ -1,4 +1,29 @@
-import { TOPICS } from "../data/topics.js";
+import { MODES } from "../data/topics.js";
+import PhilosopherSymbol from "./symbols/PhilosopherSymbol.jsx";
+import NoRulesSymbol from "./symbols/NoRulesSymbol.jsx";
+import WhoAreYouSymbol from "./symbols/WhoAreYouSymbol.jsx";
+import CouplesTherapySymbol from "./symbols/CouplesTherapySymbol.jsx";
+import JobInterviewSymbol from "./symbols/JobInterviewSymbol.jsx";
+import DadJokesSymbol from "./symbols/DadJokesSymbol.jsx";
+import AlienBriefingSymbol from "./symbols/AlienBriefingSymbol.jsx";
+import NatureDocumentarySymbol from "./symbols/NatureDocumentarySymbol.jsx";
+import FreestyleSymbol from "./symbols/FreestyleSymbol.jsx";
+import MooSymbol from "./symbols/MooSymbol.jsx";
+
+const MODE_SYMBOLS = {
+  philosopher: PhilosopherSymbol,
+  "no-rules": NoRulesSymbol,
+  "who-are-you": WhoAreYouSymbol,
+  "couples-therapy": CouplesTherapySymbol,
+  "job-interview": JobInterviewSymbol,
+  "dad-jokes": DadJokesSymbol,
+  "alien-briefing": AlienBriefingSymbol,
+  "nature-documentary": NatureDocumentarySymbol,
+  freestyle: FreestyleSymbol,
+  moo: MooSymbol,
+};
+
+const ROUND_OPTIONS = [4, 6, 8, 10, 12, 16, 20, 30, 50, 100, 200];
 
 export default function TopicPicker({
   topic,
@@ -11,90 +36,92 @@ export default function TopicPicker({
   onRandom,
 }) {
   return (
-    <section style={{ maxWidth: 640, margin: "0 auto", padding: "0 20px 20px", animation: "slideIn 0.4s ease" }}>
-      <div
-        style={{
-          fontSize: 11,
-          color: "#666",
-          textTransform: "uppercase",
-          letterSpacing: 2,
-          marginBottom: 12,
-        }}
-      >
-        Pick a topic or write your own
-      </div>
+    <section className="topic-picker">
+      <div className="container">
+        <div className="topic-picker__heading">
+          <p className="topic-picker__intro">
+            Two instances of Claude talk to each other about whatever you pick.
+            You watch.
+          </p>
+        </div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 16 }}>
-        {TOPICS.map((t) => (
-          <button
-            key={t}
-            className={`topic-btn ${topic === t && !customTopic ? "selected" : ""}`}
-            onClick={() => {
-              setTopic(t);
-              setCustomTopic("");
+        <div className="mode-grid">
+          {MODES.map((mode) => {
+            const isSelected = topic === mode.topic && !customTopic;
+            const Symbol = MODE_SYMBOLS[mode.id];
+            return (
+              <button
+                key={mode.id}
+                type="button"
+                className={`mode-card${isSelected ? " is-selected" : ""}`}
+                onClick={() => {
+                  setTopic(mode.topic);
+                  setCustomTopic("");
+                }}
+              >
+                {Symbol ? (
+                  <div className="mode-card__symbol" aria-hidden="true">
+                    <Symbol />
+                  </div>
+                ) : (
+                  <div className="mode-card__emoji" aria-hidden="true">
+                    {mode.emoji}
+                  </div>
+                )}
+                <div className="mode-card__title">{mode.title}</div>
+                <div className="mode-card__desc">{mode.desc}</div>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="divider" role="presentation">
+          <span className="divider__rule" aria-hidden="true" />
+          <span className="divider__label">Or</span>
+          <span className="divider__rule" aria-hidden="true" />
+        </div>
+
+        <div className="topic-form">
+          <input
+            type="text"
+            className="topic-input"
+            placeholder="Type any topic"
+            aria-label="Custom debate topic"
+            value={customTopic}
+            onChange={(event) => {
+              setCustomTopic(event.target.value);
+              setTopic("");
             }}
-          >
-            {t}
-          </button>
-        ))}
-        <button className="topic-btn" onClick={onRandom}>
-          🎲 Random
-        </button>
-      </div>
+          />
 
-      <input
-        type="text"
-        placeholder="Or type a custom topic..."
-        aria-label="Custom debate topic"
-        value={customTopic}
-        onChange={(e) => {
-          setCustomTopic(e.target.value);
-          setTopic("");
-        }}
-        style={{
-          width: "100%",
-          padding: "12px 16px",
-          background: "rgba(255,255,255,0.04)",
-          border: "1px solid rgba(255,255,255,0.1)",
-          borderRadius: 8,
-          color: "#e0e0e0",
-          fontSize: 14,
-          fontFamily: "'JetBrains Mono', monospace",
-          outline: "none",
-          marginBottom: 16,
-        }}
-        onFocus={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.25)")}
-        onBlur={(e) => (e.target.style.borderColor = "rgba(255,255,255,0.1)")}
-      />
-
-      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-        <button className="go-btn" disabled={!topic && !customTopic} onClick={onStart}>
-          ⚡ Start the debate
-        </button>
-        <div style={{ fontSize: 12, color: "#555" }}>
-          <label>
-            Rounds:{" "}
-            <select
-              value={maxTurns}
-              onChange={(e) => setMaxTurns(Number(e.target.value))}
-              aria-label="Number of debate rounds"
-              style={{
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "#aaa",
-                padding: "4px 8px",
-                borderRadius: 4,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 12,
-              }}
+          <div className="picker-controls">
+            <button
+              type="button"
+              className="btn btn-primary"
+              disabled={!topic && !customTopic}
+              onClick={onStart}
             >
-              {[4, 6, 8, 10, 12, 16, 20, 30].map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
-          </label>
+              Start
+            </button>
+            <button type="button" className="btn btn-ghost" onClick={onRandom}>
+              Random
+            </button>
+            <label className="rounds-label">
+              Rounds
+              <select
+                value={maxTurns}
+                onChange={(event) => setMaxTurns(Number(event.target.value))}
+                aria-label="Number of debate rounds"
+                className="rounds-select"
+              >
+                {ROUND_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
         </div>
       </div>
     </section>

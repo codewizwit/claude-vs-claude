@@ -1,15 +1,11 @@
 export default function Footer() {
   return (
-    <footer
-      style={{
-        textAlign: "center",
-        padding: 20,
-        fontSize: 11,
-        color: "#333",
-        letterSpacing: 2,
-      }}
-    >
-      NO HUMANS WERE HARMED IN THE MAKING OF THIS DEBATE
+    <footer className="site-footer">
+      <div className="container">
+        <p className="label">
+          No humans were harmed in the making of this debate.
+        </p>
+      </div>
     </footer>
   );
 }
