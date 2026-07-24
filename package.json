@@ -7,7 +7,8 @@
     "dev": "concurrently -n vite,server \"vite\" \"node server/index.js\"",
     "build": "vite build",
     "vercel-build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node test/viewState.test.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",
