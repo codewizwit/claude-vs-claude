@@ -4,6 +4,7 @@ import { TOPIC_TEXTS, findMode } from "../data/topics.js";
 import { callClaude } from "../api/claude.js";
 import { exportHtml } from "../utils/exportHtml.js";
 import { stopSpeech } from "../api/tts.js";
+import { resolveView } from "../viewState.js";
 import Header from "./Header.jsx";
 import TopicPicker from "./TopicPicker.jsx";
 import ConversationArea from "./ConversationArea.jsx";
@@ -162,6 +163,11 @@ export default function ClaudeVsClaude() {
   };
 
   const activeTopic = customTopic || topic;
+  const view = resolveView({
+    isRunning,
+    messageCount: messages.length,
+    error,
+  });
 
   return (
     <div className="app-shell">
@@ -169,12 +175,12 @@ export default function ClaudeVsClaude() {
 
       <Header
         isRunning={isRunning}
-        compact={messages.length > 0 || isRunning}
+        compact={view === "conversation"}
         onHome={goHome}
       />
 
       <main className="app-main">
-        {!isRunning && messages.length === 0 && (
+        {view === "picker" && (
           <TopicPicker
             topic={topic}
             setTopic={setTopic}
@@ -187,7 +193,7 @@ export default function ClaudeVsClaude() {
           />
         )}
 
-        {(messages.length > 0 || isRunning) && (
+        {view === "conversation" && (
           <ConversationArea
             messages={messages}
             typing={typing}
